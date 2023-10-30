@@ -1,0 +1,40 @@
+# ######################################
+# Based off the example at: 
+# https://github.com/adamrehn/ue4-example-dockerfiles/blob/master/dedicated-servers/basic/Dockerfile
+# ######################################
+
+FROM ghcr.io/epicgames/unreal-engine:dev-slim-5.1 AS builder
+
+# Copy the source code
+# UE5 images still use the classic ue4 user
+COPY --chown=ue4:ue4 . /tmp/project
+
+# Build and package the dedicated server
+WORKDIR /tmp/project
+# RUN ue4 package Shipping -server -noclient
+# RUN /home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun \
+#     -serverplatform=Linux \
+#     -project=/tmp/project/MultiplayerGame.uproject \
+#     -serverconfig=Production \
+#     -noP4 \
+#     -cook \
+#     -allmaps \
+#     -build \
+#     -stage \
+#     -prereqs \
+#     -pak \
+#     -archive \
+#     -archivedirectory=/tmp/project/dist \
+#     -server \
+#     -noclient
+
+
+# # Copy the packaged files into a runtime container image that doesn't include any Unreal Engine components
+# FROM ghcr.io/epicgames/unreal-engine:runtime
+# COPY --from=builder --chown=ue4:ue4 /tmp/project/dist/LinuxServer /app/project
+
+# # Expose the ports that the dedicated server listens on
+# EXPOSE 7777
+
+# # Set the packaged server as the container's entrypoint
+# ENTRYPOINT ["/app/project/MultiplayerGameServer.sh"]
