@@ -1,5 +1,5 @@
-# Unreal Sample
-Sample Unreal integration. Use with the Edgegap Plugin to get your game online quickly:
+# Edgegap Unreal Sample
+Sample Unreal integratio with Edgegapn. Use with the Edgegap Plugin to get your game online quickly:
 
 https://github.com/edgegap/edgegap-unreal-plugin
 
