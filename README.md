@@ -11,4 +11,4 @@ open <YOUR_DEPLOYMENT_IP:PORT>
 
 You can follow this guide to help you with the different steps involved in building and deploying your Unreal authoritative server:
 
-https://edgegap.com/integration-en/unreal-engine-and-edgegap-game-hosting
+https://docs.edgegap.com/learn/unreal-engine-games/getting-started-with-servers
