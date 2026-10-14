@@ -9,6 +9,7 @@
 
 /** Forward declaration to improve compiling times */
 class UNiagaraSystem;
+class SWidget;
 
 UCLASS()
 class AMultiplayerGamePlayerController : public APlayerController
@@ -26,11 +27,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UNiagaraSystem* FXCursor;
 
+	/** Console command: queue for a match on Edgegap. */
+	UFUNCTION(Exec)
+	void FindMatch();
+
+	/** Console command: leave the matchmaking queue. */
+	UFUNCTION(Exec)
+	void CancelMatch();
+
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 
 	// Begin PlayerController interface
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
@@ -42,6 +53,11 @@ protected:
 	void OnTouchReleased(const ETouchIndex::Type FingerIndex, const FVector Location);
 
 private:
+	/** Adds the Find Match / Cancel overlay on the menu map (standalone only, never on a server). */
+	void ShowMatchmakingWidget();
+
+	TSharedPtr<SWidget> MatchmakingWidget;
+
 	bool bInputPressed; // Input is bring pressed
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
