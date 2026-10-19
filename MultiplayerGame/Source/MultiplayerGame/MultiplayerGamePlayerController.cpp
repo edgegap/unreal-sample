@@ -11,6 +11,7 @@
 #include "Engine/GameViewportClient.h"
 #include "EdgegapMatchmakerSubsystem.h"
 #include "Misc/CommandLine.h"
+#include "TimerManager.h"
 #include "Widgets/SBoxPanel.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/Layout/SBorder.h"
@@ -42,8 +43,25 @@ void AMultiplayerGamePlayerController::BeginPlay()
 	ShowMatchmakingWidget();
 
 	// -FindMatch on the command line queues once at startup, for unattended tests with several clients.
+	// -FindMatchAt=<unix time> queues at that time instead, so clients that start at different speeds
+	// still enter the queue together.
 	static bool bAutoQueued = false;
-	if (!bAutoQueued && FParse::Param(FCommandLine::Get(), TEXT("FindMatch")))
+	int64 QueueAt = 0;
+	if (!bAutoQueued && FParse::Value(FCommandLine::Get(), TEXT("FindMatchAt="), QueueAt))
+	{
+		bAutoQueued = true;
+		// Compare with the wall clock: a plain timer drifts while the game is still loading.
+		static FTimerHandle QueueTimer;
+		GetGameInstance()->GetTimerManager().SetTimer(QueueTimer, FTimerDelegate::CreateWeakLambda(Matchmaker, [Matchmaker, QueueAt]()
+		{
+			if (FDateTime::UtcNow().ToUnixTimestamp() >= QueueAt)
+			{
+				Matchmaker->GetGameInstance()->GetTimerManager().ClearTimer(QueueTimer);
+				Matchmaker->FindMatch();
+			}
+		}), 0.5f, true);
+	}
+	else if (!bAutoQueued && FParse::Param(FCommandLine::Get(), TEXT("FindMatch")))
 	{
 		bAutoQueued = true;
 		Matchmaker->FindMatch();
