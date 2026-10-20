@@ -17,6 +17,14 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "EOSVoiceChat",
+			"Enabled": true,
+			"PlatformAllowList": [
+				"Win64",
+				"Mac"
+			]
 		}
 	]
 }
