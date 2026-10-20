@@ -1,0 +1,13 @@
+# Unreal generated folders
+MultiplayerGame/Binaries/
+MultiplayerGame/Build/
+MultiplayerGame/DerivedDataCache/
+MultiplayerGame/Intermediate/
+MultiplayerGame/Saved/
+.vs/
+
+# Packaged dedicated server (input of the Dockerfile)
+Packaged/
+
+# Local config overrides, e.g. your matchmaker URL and token
+MultiplayerGame/Config/User*.ini

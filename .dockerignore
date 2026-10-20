@@ -1,0 +1,4 @@
+*
+!Packaged/LinuxServer
+Packaged/LinuxServer/**/*.debug
+Packaged/LinuxServer/**/*.sym
