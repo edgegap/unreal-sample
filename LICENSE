@@ -1,0 +1,66 @@
+This repository contains two kinds of material under two different licences.
+
+1. Code written by Edgegap: MIT License (below).
+2. Content and code from Epic Games' Unreal Engine, including the Top Down
+   template this sample is built from: Unreal Engine EULA, NOT MIT.
+
+--------------------------------------------------------------------------------
+1. Edgegap code (MIT)
+--------------------------------------------------------------------------------
+
+Covers:
+- MultiplayerGame/Source/MultiplayerGame/Edgegap*.h and Edgegap*.cpp
+  (matchmaker client, EOS voice client/server/component/settings)
+- Edgegap's additions to the template source files listed in section 2
+  (for example the server self-stop in MultiplayerGameGameMode.cpp) and to the
+  config files (the EdgegapMatchmakerSubsystem and EdgegapVoiceSettings
+  sections in MultiplayerGame/Config/)
+- Dockerfile, .dockerignore, MultiplayerGame/Dockerfile.unreal-containers,
+  matchmaker-config.json and README.md
+
+MIT License
+
+Copyright (c) 2023-2026 Edgegap
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+2. Unreal Engine content and template code (Unreal Engine EULA, not MIT)
+--------------------------------------------------------------------------------
+
+The following come from Epic Games' Unreal Engine and its Top Down template,
+or are built from them. They are NOT licensed under the MIT License above.
+They remain subject to the Unreal Engine End User License Agreement
+(https://www.unrealengine.com/eula/unreal), and you may only use them as that
+agreement allows:
+
+- Everything in MultiplayerGame/Content/: the Top Down template maps,
+  blueprints and cursor, the LevelPrototyping assets, and the Mannequin and
+  Mannequin_UE4 characters, animations, materials and rigs.
+- The Top Down template source files marked "Copyright Epic Games, Inc.":
+  MultiplayerGame.h/.cpp, MultiplayerGameCharacter.h/.cpp,
+  MultiplayerGameGameMode.h/.cpp, MultiplayerGamePlayerController.h/.cpp,
+  MultiplayerGame.Build.cs and the *.Target.cs files.
+- The project and config files generated from the template
+  (MultiplayerGame.uproject, MultiplayerGame.sln, MultiplayerGame/Config/),
+  apart from the Edgegap sections listed in section 1.
+
+Unreal Engine itself is not included in this repository. Building and running
+this sample requires Unreal Engine, which is licensed separately by Epic Games
+under the same EULA.
