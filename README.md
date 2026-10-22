@@ -1,9 +1,11 @@
 # Edgegap Unreal Sample
-Sample Unreal integration with Edgegap. Use with the Edgegap Plugin to get your game online quickly:
+Sample Unreal integration with Edgegap. Use with one of the Edgegap plugins for Unreal Engine (the Edgegap Integration Kit, or the legacy plugin) to get your game online quickly:
 
-https://github.com/edgegap/edgegap-unreal-plugin
+https://docs.edgegap.com/learn/unreal-engine-games/developer-tools
 
-One the server has been deployed, you can connect game clients by opening the console by pressing the `` ` `` key and entering the following command:
+**Tested with:** Unreal Engine 5.5.4, built from source. The Edgegap Matchmaker end-to-end test passed on 2026-10-14 (two clients matched into one deployment, and the server stopped itself afterwards). The EOS Voice end-to-end test passed on 2026-10-20 (two matched clients in the same voice room heard each other).
+
+Once the server has been deployed, you can connect game clients by opening the console by pressing the `` ` `` key and entering the following command:
 
 ```shell
 open <YOUR_DEPLOYMENT_IP:PORT>
@@ -43,6 +45,8 @@ When enabled:
    - after 10 seconds of waiting, also accepts a single player and pings up to 250 ms;
    - cancels a ticket after 20 seconds without a match; press **Find Match** again.
 
+   **Playing alone:** with this profile, a player who queues alone is matched alone after the 10-second expansion (`min_team_size` drops to 1) and gets a server of their own, provided their ping to at least one beacon is under 250 ms. Otherwise the ticket expires after 20 seconds.
+
    The client sends latencies because the profile has a `latencies` rule. If you remove that rule, set `bSendBeaconLatencies=False` in `DefaultGame.ini`, or the matchmaker rejects the tickets.
 
 4. Turn matchmaking on and point the game at your matchmaker in `MultiplayerGame/Config/DefaultGame.ini`. Replace `YOUR_MATCHMAKER_URL` and `YOUR_MATCHMAKER_AUTH_TOKEN` with the URL and auth token shown on the matchmaker's dashboard page:
@@ -67,7 +71,7 @@ The sample can add in-game voice chat with [EOS Voice](https://dev.epicgames.com
 The dedicated server is the [trusted server](https://dev.epicgames.com/docs/epic-online-services/multiplayer/voice-and-rtc-interface/voice-interface/voice-overview#voice-with-a-trusted-server-application) that decides who talks to whom:
 
 1. The game client logs the player into EOS with a device ID, so players need no Epic account, and sends the server its Product User ID with an EOS ID token.
-2. The server checks the ID token against Epic's public keys, so a player can't claim someone else's ID. Then it picks the player's room: one room per matchmaker team, found by matching the player's IP to the matchmaker tickets, or one per match for players who connected by IP.
+2. The server checks the ID token against Epic's public keys, so a player can't claim someone else's ID. Then it picks the player's room. In code, rooms are per matchmaker team (`<match>-team-<team id>`, the team found by matching the player's IP to the matchmaker tickets), or one per match for players who connected by IP. The shipped `matchmaker-config.json` has a single team (`team_count: 1`), so with it everyone in a match shares one room.
 3. The server asks the [EOS Voice Web API](https://dev.epicgames.com/docs/web-api-ref/voice-web-api) for a room token for that player, passing the player's IP so EOS uses a voice server near them, and sends the token to that player only.
 4. The client joins the room with the engine's EOSVoiceChat plugin. When a player leaves, the server removes them from the room, which also revokes their token. Game code can also mute a player for everyone with `UEdgegapVoiceServerSubsystem::SetHardMuted`.
 
@@ -111,7 +115,7 @@ The server uses the Web API over HTTPS rather than the EOS SDK because the EOS S
 
    Voice turns on in the server when these are set, so you don't need to rebuild the server image to enable it. For a server running locally, put `ServerClientId` and `ServerClientSecret` in the `EdgegapVoiceSettings` section of `UserGame.ini` instead.
 
-5. Package the server and the client again, deploy, and play. With the matchmaker enabled, teammates share a room; set `bTeamRooms=False` to put the whole match in one room.
+5. Package the server and the client again, deploy, and play. With the matchmaker enabled and `bTeamRooms=True` (the default), each matchmaker team gets its own room. The shipped `matchmaker-config.json` has one team, so everyone in the match ends up in the same room; separate team rooms (a profile with `team_count` above 1) have not been tested. Set `bTeamRooms=False` to always put the whole match in one room.
 
 ### Testing with two clients on one PC
 
@@ -125,3 +129,11 @@ Log lines to look for (`LogEdgegapVoice`):
 
 - Server: `Voice: trusted voice server ready`, then `Voice: <id> gets room <room>` for each player, and `Voice: removed <id>` when a player leaves.
 - Client: `Voice: logged into EOS as <id>`, `Voice: joined room <room>`, and `Voice: <id> started talking`.
+
+## Security
+
+**Known limitation:** the server does not check that a connecting player holds a matchmaker ticket for this match, so anyone who learns the server address can join. With voice on, such a player also gets a token for the match's voice room. Deployments started by the matchmaker stop themselves when no one joins or everyone leaves, which limits cost. Before production, validate each player against the match's tickets (`MM_TICKET_IDS` / the matchmaker API) or an auth token, for example in `AMultiplayerGameGameMode::PreLogin`.
+
+## License
+
+Edgegap's code in this repository is available under the [MIT License](LICENSE). The Unreal Engine content it builds on (everything in `MultiplayerGame/Content/` and the Top Down template source files marked `Copyright Epic Games, Inc.`) is not MIT: it remains under the [Unreal Engine EULA](https://www.unrealengine.com/eula/unreal). See [LICENSE](LICENSE) for which files are which.

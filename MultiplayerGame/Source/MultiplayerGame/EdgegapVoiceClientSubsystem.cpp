@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Edgegap. Licensed under the MIT License, see LICENSE at the repository root.
 
 #include "EdgegapVoiceClientSubsystem.h"
 #include "EdgegapVoiceSettings.h"
